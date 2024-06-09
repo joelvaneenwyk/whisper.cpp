@@ -1,3 +1,7 @@
+cmake-build-*/
+
+/*.exe
+
 *.o
 *.a
 .cache/
