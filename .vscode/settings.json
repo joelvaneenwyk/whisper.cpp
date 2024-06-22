@@ -1,0 +1,36 @@
+{
+    "cmake.useCMakePresets": "always",
+    "cmake.allowUnsupportedPresetsVersions": true,
+    "cmake.automaticReconfigure": true,
+    "cmake.setBuildTypeOnMultiConfig": false,
+    "terminal.integrated.profiles.windows": {
+        "PowerShell": {
+            "source": "PowerShell",
+            "icon": "terminal-powershell"
+        },
+        "Command Prompt": {
+            "path": [
+                "${env:windir}\\Sysnative\\cmd.exe",
+                "${env:windir}\\System32\\cmd.exe"
+            ],
+            "args": [],
+            "icon": "terminal-cmd"
+        },
+        "Git Bash": {
+            "source": "Git Bash"
+        },
+        "MSYS2": {
+            "path": "C:\\Users\\JoelVanEenwyk\\scoop\\apps\\msys2\\current\\usr\\bin\\bash.exe",
+            "label": "MSYS2",
+            "args": [
+                "--login",
+                "-i"
+            ],
+            "env": {
+                "MSYSTEM": "MINGW64",
+                "CHERE_INVOKING": "1",
+                "MSYS2_PATH_TYPE": "inherit"
+            }
+        }
+    }
+}
