@@ -5,7 +5,9 @@
       {
         "name": "debug",
         "generator": "Visual Studio 17 2022",
+        "binaryDir": "${sourceDir}/.build/debug",
         "cacheVariables": {
+            "WHISPER_SDL2": "ON",
             "CMAKE_BUILD_TYPE": "Debug",
             "CMAKE_INSTALL_PREFIX": "${sourceDir}/.build/install",
             "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/external/vcpkg/scripts/buildsystems/vcpkg.cmake"
@@ -15,8 +17,9 @@
         "name": "release",
         "generator": "Visual Studio 17 2022",
         "cacheVariables": {
+          "WHISPER_SDL2": "ON",
             "CMAKE_BUILD_TYPE": "Release",
-            "CMAKE_INSTALL_PREFIX": "${sourceDir}/.build/install",
+            "CMAKE_INSTALL_PREFIX": "${sourceDir}/.build/release",
             "CMAKE_TOOLCHAIN_FILE": "${sourceDir}/external/vcpkg/scripts/buildsystems/vcpkg.cmake"
         }
       }

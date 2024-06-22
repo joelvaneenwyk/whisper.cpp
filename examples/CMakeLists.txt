@@ -5,10 +5,7 @@ find_package(Threads REQUIRED)
 # third-party
 
 if (WHISPER_SDL2)
-    string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
-
-    message(STATUS "SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS}")
-    message(STATUS "SDL2_LIBRARIES = ${SDL2_LIBRARIES}")
+    find_package(SDL2 CONFIG REQUIRED)
 endif()
 
 if (WHISPER_CLBLAST)
