@@ -65,3 +65,8 @@ cmake-build-debug/
 .cxx/
 .gradle/
 local.properties
+
+vcpkg_installed/
+out/
+build_*/
+*.nupkg

@@ -7,7 +7,14 @@ if (WHISPER_SDL2)
     if (WHISPER_CLBLAST)
         set(CLBLAST_LIBNAME clblast)
     endif ()
-    target_link_libraries(${TARGET} PRIVATE common common-sdl whisper ${SDL2_LIBRARIES} ${CLBLAST_LIBNAME} ${CMAKE_THREAD_LIBS_INIT})
+
+    target_link_libraries(${TARGET}
+        PRIVATE
+        common common-sdl whisper
+        ${CLBLAST_LIBNAME} ${CMAKE_THREAD_LIBS_INIT}
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    )
 
     if(WIN32)
         # It requires Windows 8.1 or later for PrefetchVirtualMemory

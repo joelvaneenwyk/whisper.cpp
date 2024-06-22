@@ -5,9 +5,6 @@ find_package(Threads REQUIRED)
 # third-party
 
 if (WHISPER_SDL2)
-    # SDL2
-    find_package(SDL2 REQUIRED)
-
     string(STRIP "${SDL2_LIBRARIES}" SDL2_LIBRARIES)
 
     message(STATUS "SDL2_INCLUDE_DIRS = ${SDL2_INCLUDE_DIRS}")
@@ -55,8 +52,11 @@ if (WHISPER_SDL2)
 
     include(DefaultTargetOptions)
 
-    target_include_directories(${TARGET} PUBLIC ${SDL2_INCLUDE_DIRS})
-    target_link_libraries(${TARGET} PRIVATE ${SDL2_LIBRARIES})
+    target_link_libraries(${TARGET}
+        PRIVATE
+        $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+        $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+    )
 
     set_target_properties(${TARGET} PROPERTIES POSITION_INDEPENDENT_CODE ON)
     set_target_properties(${TARGET} PROPERTIES FOLDER "libs")
