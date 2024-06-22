@@ -26,7 +26,7 @@ vars:
       done
   MSBUILD_EXE: '{{fromSlash .MSBUILD_EXE_RAW}}'
 
-  BUILD_INT_DIR: "{{.TASKFILE_DIR}}/.build"
+  BUILD_INT_DIR: "{{.TASKFILE_DIR}}/.build/tasks"
   BUILD_DIR: "{{fromSlash .BUILD_INT_DIR}}"
 
 env:
@@ -38,13 +38,16 @@ tasks:
       - task: build
 
   build:
-    deps: [vcpkg-install]
+    deps: [vcpkg-integrate]
     vars:
       CONFIG: Release
       ARCHITECTURE: x64
       USE_SDL2: ON
       GENERATOR: "Visual Studio 17 2022"
       TOOLCHAIN: '{{.TASKFILE_DIR}}/external/vcpkg/scripts/buildsystems/vcpkg.cmake'
+      OUTPUT_DIR: "{{ joinPath .BUILD_DIR .CONFIG | fromSlash }}"
+      ALL_BUILD: '{{ joinPath .OUTPUT_DIR "ALL_BUILD.vcxproj" | fromSlash }}'
+      SLN: '{{ joinPath .OUTPUT_DIR "whisper.cpp.sln" | fromSlash }}'
 
     preconditions:
       - '"{{.MSBUILD_EXE}}" --version'
@@ -53,19 +56,20 @@ tasks:
       - cmd: >
           cmake
           -S "{{ .TASKFILE_DIR }}"
-          -B "{{ .BUILD_DIR }}"
-          -G "{{ .GENERATOR }}" -A "{{ .ARCHITECTURE }}"
+          -B "{{ .OUTPUT_DIR }}"
+          -G "{{ .GENERATOR }}"
+          -A "{{ .ARCHITECTURE }}"
           -DCMAKE_BUILD_TYPE="{{ .CONFIG }}"
           -DWHISPER_SDL2={{ .USE_SDL2 }}
-          -DCMAKE_TOOLCHAIN_FILE="{{fromSlash .TOOLCHAIN}}"
+          -DCMAKE_TOOLCHAIN_FILE="{{ fromSlash .TOOLCHAIN }}"
 
       - cmd: |
-          "{{.MSBUILD_EXE}}" "{{ .BUILD_DIR }}/ALL_BUILD.vcxproj" -t:Build -p:Configuration="{{ .CONFIG }}"
+          "{{.MSBUILD_EXE}}" "{{ .ALL_BUILD }}" -t:Build -p:Configuration="{{ .CONFIG }}"
 
       - task: msbuild
-        vars: { CONFIG: Debug, PLATFORM: '{{ .ARCHITECTURE }}' }
+        vars: { CONFIG: Debug, PLATFORM: '{{ .ARCHITECTURE }}', SLN: '{{ .SLN }}' }
       - task: msbuild
-        vars: { CONFIG: Release, PLATFORM: '{{ .ARCHITECTURE }}' }
+        vars: { CONFIG: Release, PLATFORM: '{{ .ARCHITECTURE }}', SLN: '{{ .SLN }}' }
 
       #  with:
       #    name: "{{ .jnaPath }}_whisper.dll"
@@ -86,13 +90,13 @@ tasks:
       - cmd: >
           "{{ .MSBUILD_EXE }}"
           /t:Build /p:Configuration="{{.CONFIG}}" /p:Platform="{{.PLATFORM}}"
-          "{{ .BUILD_DIR }}/whisper.cpp.sln"
+          "{{ fromSlash .SLN }}"
 
   install-dependencies:
     deps: [install-packages-scoop-pkg-config]
     cmds:
       - task: install-packages
-      - task: vcpkg-install
+      - task: vcpkg-integrate
 
   scoop-install:
     desc: Install libraries with scoop
@@ -111,13 +115,6 @@ tasks:
       - 'test -f "{{.VCPKG_BOOTSTRAP_BAT}}"'
     cmds:
       - cmd: 'git -C "{{.TASKFILE_DIR}}" submodule update --init --recursive'
-
-  vcpkg-install:
-    deps: [vcpkg-integrate]
-    status:
-      - 'test -f "./vcpkg_installed/x64-windows/bin/iir.dll"'
-    cmds:
-      - cmd: '{{.RUN}} "{{ fromSlash .VCPKG_EXE }}" install'
 
   vcpkg-integrate:
     deps: [vcpkg-download]
