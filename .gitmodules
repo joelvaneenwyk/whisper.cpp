@@ -1,3 +1,7 @@
 [submodule "bindings/ios"]
 	path = bindings/ios
 	url = https://github.com/ggerganov/whisper.spm
+[submodule "external/vcpkg"]
+	path = external/vcpkg
+	url = https://github.com/microsoft/vcpkg.git
+	branch = master
