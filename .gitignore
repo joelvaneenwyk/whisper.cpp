@@ -70,4 +70,8 @@ out/
 build_*/
 .task/
 dist/
+.venv/
+.mypy_cache/
 *.nupkg
+
+/CMakeFiles/

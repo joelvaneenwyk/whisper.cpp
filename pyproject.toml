@@ -3,9 +3,13 @@ name = "whisper-cpp"
 version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Joel Van Eenwyk", email = "joel.vaneenwyk@gmail.com" }]
-dependencies = []
+dependencies = [
+    "torch==2.3.1+cpu",
+    "torchvision==0.18.1+cpu",
+    "torchaudio==2.3.1+cpu",
+]
 readme = "README.md"
-requires-python = ">= 3.11, < 3.12"
+requires-python = ">=3.11, <4"
 
 [build-system]
 requires = ["hatchling"]
@@ -13,21 +17,23 @@ build-backend = "hatchling.build"
 
 [tool.rye]
 managed = true
-dev-dependencies = []
+dev-dependencies = [
+    "ruff>=0.4.10",
+    "mypy>=1.10.0",
+    "pylint>=3.2.3",
+    "isort>=5.13.2",
+    "uv>=0.2.13",
+    "pyright>=1.1.368",
+]
+
+[[tool.rye.sources]]
+name = "pytorch"
+url = "https://download.pytorch.org/whl/cpu"
 
 [tool.hatch.metadata]
 allow-direct-references = true
 
 [tool.hatch.build.targets.wheel]
-ignore = [
-    ".git/",
-    ".build/",
-    "build/",
-    "dist/",
-    "external/",
-    "vcpkg_installed/",
-    "external/",
-]
 packages = [
     "src/models/convert-h5-to-coreml.py",
     "src/models/convert-h5-to-ggml.py",
@@ -35,21 +41,18 @@ packages = [
     "src/models/convert-whisper-to-coreml.py",
     "src/models/convert-whisper-to-openvino.py",
     "src/models/ggml_to_pt.py",
-    #"src/models/download-coreml-model.sh",
-    #"src/models/download-ggml-model.cmd",
-    #"src/models/download-ggml-model.sh",
-    #"src/models/for-tests-ggml-base.bin",
-    #"src/models/for-tests-ggml-base.en.bin",
-    #"src/models/for-tests-ggml-large.bin",
-    #"src/models/for-tests-ggml-medium.bin",
-    #"src/models/for-tests-ggml-medium.en.bin",
-    #"src/models/for-tests-ggml-small.bin",
-    #"src/models/for-tests-ggml-small.en.bin",
-    #"src/models/for-tests-ggml-tiny.bin",
-    #"src/models/for-tests-ggml-tiny.en.bin",
-    #"src/models/generate-coreml-interface.sh",
-    #"src/models/generate-coreml-model.sh",
-    #"src/models/README.md",
-    #"src/models/requirements-coreml.txt",
-    #"src/models/requirements-openvino.txt",
 ]
+
+[tool.hatch.build.targets.sdist]
+exclude = [
+    ".build/",
+    ".git/",
+    ".mypy_cache/",
+    ".task/",
+    ".venv/",
+    "build/",
+    "dist/",
+    "external/vcpkg/",
+    "vcpkg_installed/",
+]
+ignore-vcs = true

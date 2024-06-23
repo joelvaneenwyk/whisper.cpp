@@ -9,3 +9,61 @@
 #   generate-hashes: false
 
 -e file:.
+astroid==3.2.2
+    # via pylint
+colorama==0.4.6
+    # via pylint
+dill==0.3.8
+    # via pylint
+filelock==3.13.1
+    # via torch
+fsspec==2024.2.0
+    # via torch
+intel-openmp==2021.4.0
+    # via mkl
+isort==5.13.2
+    # via pylint
+jinja2==3.1.3
+    # via torch
+markupsafe==2.1.5
+    # via jinja2
+mccabe==0.7.0
+    # via pylint
+mkl==2021.4.0
+    # via torch
+mpmath==1.3.0
+    # via sympy
+mypy==1.10.0
+mypy-extensions==1.0.0
+    # via mypy
+networkx==3.2.1
+    # via torch
+nodeenv==1.9.1
+    # via pyright
+numpy==1.26.3
+    # via torchvision
+pillow==10.2.0
+    # via torchvision
+platformdirs==4.2.2
+    # via pylint
+pylint==3.2.3
+pyright==1.1.368
+ruff==0.4.10
+sympy==1.12
+    # via torch
+tbb==2021.11.0
+    # via mkl
+tomlkit==0.12.5
+    # via pylint
+torch==2.3.1+cpu
+    # via torchaudio
+    # via torchvision
+    # via whisper-cpp
+torchaudio==2.3.1+cpu
+    # via whisper-cpp
+torchvision==0.18.1+cpu
+    # via whisper-cpp
+typing-extensions==4.9.0
+    # via mypy
+    # via torch
+uv==0.2.13
