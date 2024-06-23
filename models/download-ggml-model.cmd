@@ -40,7 +40,10 @@ if exist "ggml-%model%.bin" (
   goto :eof
 )
 
-PowerShell -NoProfile -ExecutionPolicy Bypass -Command "Start-BitsTransfer -Source https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-%model%.bin -Destination ggml-%model%.bin"
+set "model_file=ggml-%model%.bin"
+set "model_url=https://huggingface.co/ggerganov/whisper.cpp/resolve/main/%model_file%"
+pwsh -NoProfile -ExecutionPolicy Bypass ^
+  -Command "Start-BitsTransfer -Source "%model_url%" -Destination %model_file%""
 
 if %ERRORLEVEL% neq 0 (
   echo Failed to download ggml model %model%

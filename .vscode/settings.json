@@ -1,36 +1,48 @@
 {
-    "cmake.useCMakePresets": "always",
+    "[python]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnSaveMode": "modificationsIfAvailable",
+        "editor.codeActionsOnSave": {
+            "source.organizeImports": "explicit",
+            "source.fixAll": "explicit"
+
+        },
+        "editor.defaultFormatter": "ms-python.python"
+    },
+    "editor.formatOnSaveMode": "modificationsIfAvailable",
+    "ruff.fixAll": true,
     "cmake.allowUnsupportedPresetsVersions": true,
     "cmake.automaticReconfigure": true,
     "cmake.setBuildTypeOnMultiConfig": false,
+    "cmake.useCMakePresets": "always",
     "terminal.integrated.profiles.windows": {
-        "PowerShell": {
-            "source": "PowerShell",
-            "icon": "terminal-powershell"
-        },
         "Command Prompt": {
+            "args": [],
+            "icon": "terminal-cmd",
             "path": [
                 "${env:windir}\\Sysnative\\cmd.exe",
                 "${env:windir}\\System32\\cmd.exe"
-            ],
-            "args": [],
-            "icon": "terminal-cmd"
+            ]
         },
         "Git Bash": {
             "source": "Git Bash"
         },
         "MSYS2": {
-            "path": "C:\\Users\\JoelVanEenwyk\\scoop\\apps\\msys2\\current\\usr\\bin\\bash.exe",
-            "label": "MSYS2",
             "args": [
                 "--login",
                 "-i"
             ],
             "env": {
-                "MSYSTEM": "MINGW64",
                 "CHERE_INVOKING": "1",
-                "MSYS2_PATH_TYPE": "inherit"
-            }
+                "MSYS2_PATH_TYPE": "inherit",
+                "MSYSTEM": "MINGW64"
+            },
+            "label": "MSYS2",
+            "path": "C:\\Users\\JoelVanEenwyk\\scoop\\apps\\msys2\\current\\usr\\bin\\bash.exe"
+        },
+        "PowerShell": {
+            "icon": "terminal-powershell",
+            "source": "PowerShell"
         }
     }
 }
