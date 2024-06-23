@@ -4,9 +4,9 @@ version = "0.1.0"
 description = "Add your description here"
 authors = [{ name = "Joel Van Eenwyk", email = "joel.vaneenwyk@gmail.com" }]
 dependencies = [
-    "torch==2.3.1+cpu",
-    "torchvision==0.18.1+cpu",
-    "torchaudio==2.3.1+cpu",
+    "torch",
+    "coremltools",
+    "openai-whisper",
 ]
 readme = "README.md"
 requires-python = ">=3.11, <4"
@@ -27,8 +27,20 @@ dev-dependencies = [
 ]
 
 [[tool.rye.sources]]
-name = "pytorch"
-url = "https://download.pytorch.org/whl/cpu"
+name = "default"
+url  = "https://pypi.org/simple"
+
+[[tool.rye.sources]]
+name = "torch-cpu"
+url  = "https://download.pytorch.org/whl/cpu"
+
+[[tool.rye.sources]]
+name = "torch-cuda"
+url  = "https://download.pytorch.org/whl/cu118"
+
+[[tool.rye.sources]]
+name = "torch-rocm"
+url  = "https://download.pytorch.org/whl/rocm6.0"
 
 [tool.hatch.metadata]
 allow-direct-references = true
