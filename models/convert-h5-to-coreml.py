@@ -1,3 +1,7 @@
+"""Convert H5 to CoreML."""
+# pylint: disable=wrong-import-order
+# pylint: disable=wrong-import-position
+
 import argparse
 import importlib.util
 
@@ -5,12 +9,11 @@ spec = importlib.util.spec_from_file_location("whisper_to_coreml", "models/conve
 whisper_to_coreml = importlib.util.module_from_spec(spec)
 spec.loader.exec_module(whisper_to_coreml)
 
-from whisper import load_model
+from whisper import load_model  # noqa: E402
 
-from copy import deepcopy
-import torch
-from transformers import WhisperForConditionalGeneration
-from huggingface_hub import metadata_update
+from copy import deepcopy  # noqa: E402
+import torch  # noqa: E402
+from transformers import WhisperForConditionalGeneration  # noqa: E402
 
 # https://github.com/bayartsogt-ya/whisper-multiple-hf-datasets/blob/main/src/multiple_datasets/hub_default_utils.py
 WHISPER_MAPPING = {
@@ -18,7 +21,6 @@ WHISPER_MAPPING = {
     "fc1": "mlp.0",
     "fc2": "mlp.2",
     "final_layer_norm": "mlp_ln",
-    "layers": "blocks",
     ".self_attn.q_proj": ".attn.query",
     ".self_attn.k_proj": ".attn.key",
     ".self_attn.v_proj": ".attn.value",
