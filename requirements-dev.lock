@@ -9,6 +9,8 @@
 #   generate-hashes: false
 
 -e file:.
+ane-transformers==0.1.1
+    # via whisper-cpp
 astroid==3.2.2
     # via pylint
 attrs==23.2.0
@@ -24,13 +26,20 @@ colorama==0.4.6
     # via pylint
     # via tqdm
 coremltools==7.2
+    # via ane-transformers
     # via whisper-cpp
 dill==0.3.8
     # via pylint
 filelock==3.13.1
+    # via huggingface-hub
     # via torch
+    # via transformers
 fsspec==2024.2.0
+    # via huggingface-hub
     # via torch
+huggingface-hub==0.23.4
+    # via tokenizers
+    # via transformers
 idna==3.4
     # via requests
 intel-openmp==2021.4.0
@@ -64,25 +73,36 @@ numpy==1.26.3
     # via coremltools
     # via numba
     # via openai-whisper
+    # via transformers
 openai-whisper==20231117
     # via whisper-cpp
 packaging==22.0
     # via coremltools
+    # via huggingface-hub
+    # via transformers
 platformdirs==4.2.2
     # via pylint
-protobuf==3.20.3
+protobuf==3.20.1
+    # via ane-transformers
     # via coremltools
 pyaml==24.4.0
     # via coremltools
 pylint==3.2.3
 pyright==1.1.368
 pyyaml==6.0.1
+    # via huggingface-hub
     # via pyaml
+    # via transformers
 regex==2024.5.15
     # via tiktoken
+    # via transformers
 requests==2.28.1
+    # via huggingface-hub
     # via tiktoken
+    # via transformers
 ruff==0.4.10
+safetensors==0.4.3
+    # via transformers
 sympy==1.12
     # via coremltools
     # via torch
@@ -90,15 +110,23 @@ tbb==2021.11.0
     # via mkl
 tiktoken==0.7.0
     # via openai-whisper
+tokenizers==0.19.1
+    # via transformers
 tomlkit==0.12.5
     # via pylint
 torch==2.3.1+cpu
+    # via ane-transformers
     # via openai-whisper
     # via whisper-cpp
 tqdm==4.64.1
     # via coremltools
+    # via huggingface-hub
     # via openai-whisper
+    # via transformers
+transformers==4.41.2
+    # via ane-transformers
 typing-extensions==4.9.0
+    # via huggingface-hub
     # via mypy
     # via torch
 urllib3==1.26.13
