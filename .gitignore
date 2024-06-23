@@ -68,4 +68,5 @@ local.properties
 vcpkg_installed/
 out/
 build_*/
+.task/
 *.nupkg

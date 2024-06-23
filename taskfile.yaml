@@ -29,6 +29,13 @@ vars:
   BUILD_INT_DIR: "{{.TASKFILE_DIR}}/.build/tasks"
   BUILD_DIR: "{{fromSlash .BUILD_INT_DIR}}"
 
+  CONFIG: Release
+  ARCHITECTURE: x64
+  USE_SDL2: ON
+  GENERATOR: "Visual Studio 17 2022"
+  TOOLCHAIN: '{{.TASKFILE_DIR}}/external/vcpkg/scripts/buildsystems/vcpkg.cmake'
+  SLN: '{{ joinPath .BUILD_DIR "whisper.cpp.sln" | fromSlash }}'
+
 env:
   VCPKG_DISABLE_METRICS: 1
 
@@ -37,48 +44,48 @@ tasks:
     cmds:
       - task: build
 
-  build:
-    deps: [vcpkg-integrate]
+  run:
+    deps: [build]
     vars:
-      CONFIG: Release
-      ARCHITECTURE: x64
-      USE_SDL2: ON
-      GENERATOR: "Visual Studio 17 2022"
-      TOOLCHAIN: '{{.TASKFILE_DIR}}/external/vcpkg/scripts/buildsystems/vcpkg.cmake'
-      OUTPUT_DIR: "{{ joinPath .BUILD_DIR .CONFIG | fromSlash }}"
-      ALL_BUILD: '{{ joinPath .OUTPUT_DIR "ALL_BUILD.vcxproj" | fromSlash }}'
-      SLN: '{{ joinPath .OUTPUT_DIR "whisper.cpp.sln" | fromSlash }}'
-
+      CONFIG: '{{ default "Debug" .CONFIG }}'
+      OUTPUT_DIR: '{{ joinPath .BUILD_DIR "bin" .CONFIG | fromSlash }}'
+      OUTPUT_EXE: '{{ joinPath .OUTPUT_DIR "main.exe" }}'
     preconditions:
-      - '"{{.MSBUILD_EXE}}" --version'
-      - 'cmake --version'
+      - 'test -f "{{.OUTPUT_EXE}}"'
     cmds:
-      - cmd: >
-          cmake
-          -S "{{ .TASKFILE_DIR }}"
-          -B "{{ .OUTPUT_DIR }}"
-          -G "{{ .GENERATOR }}"
-          -A "{{ .ARCHITECTURE }}"
-          -DCMAKE_BUILD_TYPE="{{ .CONFIG }}"
-          -DWHISPER_SDL2={{ .USE_SDL2 }}
-          -DCMAKE_TOOLCHAIN_FILE="{{ fromSlash .TOOLCHAIN }}"
+      - cmd: '{{ .RUN }} "{{ fromSlash .OUTPUT_EXE }}" {{ .CLI_ARGS }}'
 
-      - cmd: |
-          "{{.MSBUILD_EXE}}" "{{ .ALL_BUILD }}" -t:Build -p:Configuration="{{ .CONFIG }}"
-
+  build:
+    deps: [configure]
+    sources:
+      - '{{ .SLN }}'
+    generates:
+      - '{{ joinPath .BUILD_DIR "bin" "Debug" "main.exe" }}'
+      - '{{ joinPath .BUILD_DIR "bin" "Release" "main.exe" }}'
+    cmds:
       - task: msbuild
         vars: { CONFIG: Debug, PLATFORM: '{{ .ARCHITECTURE }}', SLN: '{{ .SLN }}' }
       - task: msbuild
         vars: { CONFIG: Release, PLATFORM: '{{ .ARCHITECTURE }}', SLN: '{{ .SLN }}' }
 
-      #  with:
-      #    name: "{{ .jnaPath }}_whisper.dll"
-      #    path: "{{ .BUILD_DIR }}/bin/{{ .CONFIG }}/whisper.dll"
-
-      #  uses: actions/upload-artifact@v4
-      #  with:
-      #    name: "whisper-bin-{{ .ARCHITECTURE }}"
-      #    path: "{{ .BUILD_DIR }}/bin/{{ .CONFIG }}"
+  configure:
+    deps: [vcpkg-integrate]
+    preconditions:
+      - 'cmake --version'
+    sources:
+      - CMakeLists.txt
+    generates:
+      - '{{ .SLN }}'
+    cmds:
+      - cmd: >
+          cmake
+          -S "{{ .TASKFILE_DIR }}"
+          -B "{{ .BUILD_DIR }}"
+          -G "{{ .GENERATOR }}"
+          -A "{{ .ARCHITECTURE }}"
+          -DCMAKE_BUILD_TYPE="{{ .CONFIG }}"
+          -DWHISPER_SDL2={{ .USE_SDL2 }}
+          -DCMAKE_TOOLCHAIN_FILE="{{ fromSlash .TOOLCHAIN }}"
 
   msbuild:
     internal: true
@@ -86,10 +93,13 @@ tasks:
     vars:
       CONFIG: '{{.CONFIG | default "Debug"}}'
       PLATFORM: '{{.PLATFORM | default "x64"}}'
+    preconditions:
+      - '"{{.MSBUILD_EXE}}" --version'
+      - 'test -f "{{.SLN}}"'
     cmds:
       - cmd: >
           "{{ .MSBUILD_EXE }}"
-          /t:Build /p:Configuration="{{.CONFIG}}" /p:Platform="{{.PLATFORM}}"
+          -t:Build -p:Configuration="{{.CONFIG}}" -p:Platform="{{.PLATFORM}}"
           "{{ fromSlash .SLN }}"
 
   install-dependencies:
