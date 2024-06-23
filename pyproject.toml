@@ -8,6 +8,7 @@ dependencies = [
     "coremltools",
     "openai-whisper",
     "ane-transformers",
+    "elevenlabs>=1.3.1",
 ]
 readme = "README.md"
 requires-python = ">=3.11, <4"
