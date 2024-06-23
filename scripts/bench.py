@@ -94,11 +94,7 @@ def check_file_exists(file: str) -> bool:
 
 def get_git_short_hash() -> str:
     try:
-        return (
-            subprocess.check_output(["git", "rev-parse", "--short", "HEAD"])
-            .decode()
-            .strip()
-        )
+        return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
     except subprocess.CalledProcessError as e:
         return ""
 
@@ -149,9 +145,7 @@ for model in filtered_models:
             # Construct the command to run
             cmd = f"./main -m models/{model} -t {thread} -p {processor_count} -f {sample_file}"
             # Run the command and get the output
-            process = subprocess.Popen(
-                cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT
-            )
+            process = subprocess.Popen(cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 
             output = ""
             while process.poll() is None:
@@ -171,9 +165,7 @@ for model in filtered_models:
 
             model_name = model.replace("ggml-", "").replace(".bin", "")
 
-            print(
-                f"Ran model={model_name} threads={thread} processor_count={processor_count}, took {total_time}ms"
-            )
+            print(f"Ran model={model_name} threads={thread} processor_count={processor_count}, took {total_time}ms")
             # Store the times in the results dictionary
             results[(model_name, thread, processor_count)] = {
                 loadTimeHeader: load_time,
