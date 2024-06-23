@@ -1,6 +1,6 @@
 [project]
 name = "whisper-cpp"
-version = "0.1.0"
+version = "1.6.2"
 description = "Add your description here"
 authors = [{ name = "Joel Van Eenwyk", email = "joel.vaneenwyk@gmail.com" }]
 dependencies = [

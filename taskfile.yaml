@@ -55,6 +55,51 @@ tasks:
         ignore_error: true
       - cmd: 'git -C "{{ .TASKFILE_DIR }}" add .'
 
+  model:
+    internal: true
+    vars:
+      MODEL: '{{ default "base" .MODEL }}'
+      MODEL_FILE: "ggml-{{ .MODEL }}.bin"
+      MODEL_OUTPUT_REL_PATH: "models/{{ .MODEL_FILE }}"
+      MODEL_OUTPUT_PATH: "{{ .TASKFILE_DIR }}/{{ .MODEL_OUTPUT_REL_PATH }}"
+      MODEL_URL: "https://huggingface.co/ggerganov/whisper.cpp/resolve/main/{{.MODEL_FILE}}"
+    status:
+      - 'test -f "{{ fromSlash .MODEL_OUTPUT_PATH }}"'
+    cmds:
+      - cmd: >-
+          pwsh
+          -NoProfile
+          -ExecutionPolicy Bypass
+          -Command "Start-BitsTransfer -Source '{{ .MODEL_URL }}' -Destination '{{ fromSlash .MODEL_OUTPUT_PATH }}'"
+
+  check:
+    deps: [build]
+    vars:
+      MODEL: '{{ default "base" .MODEL }}'
+      SAMPLE: '{{ default "jfk" .SAMPLE }}'
+      SAMPLE_WAV_PATH: "{{ .TASKFILE_DIR }}/samples/{{ .SAMPLE }}.wav"
+      SAMPLE_OUTPUT_DIR: "{{ .BUILD_DIR }}/output"
+      SAMPLE_OUTPUT: "{{ .SAMPLE_OUTPUT_DIR }}/{{ .SAMPLE }}"
+
+      OUTPUT_SRT_PATH: "{{ .SAMPLE_OUTPUT }}.srt"
+      MODEL_PATH: "{{ .TASKFILE_DIR }}/models/ggml-{{ .MODEL }}.bin"
+    preconditions:
+      - 'test -f "{{ .SAMPLE_WAV_PATH }}"'
+    status:
+      - 'test -f "{{ .OUTPUT_SRT_PATH }}"'
+    cmds:
+      - task: model
+      - cmd: 'mkdir "{{ fromSlash .SAMPLE_OUTPUT_DIR }}"'
+        ignore_error: true
+      - task: run
+        vars:
+          CLI_ARGS: >-
+            --output-srt
+            --output-file "{{ fromSlash .SAMPLE_OUTPUT }}"
+            --model "{{ fromSlash .MODEL_PATH }}"
+            --file "{{ fromSlash .SAMPLE_WAV_PATH }}"
+      - task: commit-prepare
+
   run:
     deps: [build]
     vars:
@@ -139,13 +184,17 @@ tasks:
 
   vcpkg-integrate:
     deps: [vcpkg-download]
+    vars:
+      OUTPUT_LOG_PATH: '{{ .BUILD_INT_DIR }}/vcpkg-integrate.log'
+    status:
+      - 'test -f "{{ .OUTPUT_LOG_PATH}} "'
     cmds:
-      - cmd: '{{.RUN}} "{{ fromSlash .VCPKG_EXE }}" integrate install'
+      - cmd: '{{.RUN}} "{{ fromSlash .VCPKG_EXE }}" integrate install >"{{ fromSlash .OUTPUT_LOG_PATH }}"'
 
   vcpkg-download:
     deps: [git-submodule-init]
     status:
-      - 'test -f "{{.VCPKG_EXE}}"'
+      - 'test -f "{{ fromSlash .VCPKG_EXE}}"'
     cmds:
       - cmd: '{{.RUN}} "{{ fromSlash .VCPKG_BOOTSTRAP_BAT }}" -disableMetrics'
 
