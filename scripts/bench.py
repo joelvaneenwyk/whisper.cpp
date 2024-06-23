@@ -1,14 +1,16 @@
-import os
-import subprocess
-import re
-import csv
-import wave
-import contextlib
+#!/usr/bin/env python3
+
 import argparse
+import contextlib
+import csv
+import os
+import re
+import subprocess
+import wave
 
 
-# Custom action to handle comma-separated list
 class ListAction(argparse.Action):
+    """Custom action to handle comma-separated list"""
     def __call__(self, parser, namespace, values, option_string=None):
         setattr(namespace, self.dest, [int(val) for val in values.split(",")])
 
@@ -99,7 +101,7 @@ def get_git_short_hash() -> str:
         return ""
 
 
-def wav_file_length(file: str = sample_file) -> float:
+def wav_file_length(file: str) -> float:
     with contextlib.closing(wave.open(file, "r")) as f:
         frames = f.getnframes()
         rate = f.getframerate()
@@ -111,7 +113,7 @@ def extract_metrics(output: str, label: str) -> tuple[float, float]:
     match = re.search(rf"{label} \s*=\s*(\d+\.\d+)\s*ms\s*/\s*(\d+)\s*runs", output)
     time = float(match.group(1)) if match else None
     runs = float(match.group(2)) if match else None
-    return time, runs
+    return time or 0.0, runs or 1
 
 
 def extract_device(output: str) -> str:
@@ -120,22 +122,34 @@ def extract_device(output: str) -> str:
     return device
 
 
+# get the current script folder
+script_folder = os.path.dirname(os.path.realpath(__file__))
+repo_folder = os.path.abspath(os.path.join(script_folder, os.pardir))
+
+if not check_file_exists(sample_file):
+    sample_file = os.path.abspath(os.path.join(repo_folder, sample_file))
+
 # Check if the sample file exists
 if not check_file_exists(sample_file):
     raise FileNotFoundError(f"Sample file {sample_file} not found")
 
-recording_length = wav_file_length()
+recording_length = wav_file_length(sample_file)
 
 
 # Check that all models exist
 # Filter out models from list that are not downloaded
 filtered_models = []
 for model in models:
-    if check_file_exists(f"models/{model}"):
-        filtered_models.append(model)
-    else:
-        print(f"Model {model} not found, removing from list")
+    model_path = os.path.join(repo_folder, f"models/for-tests-{model}")
+    if check_file_exists(model_path):
+        filtered_models.append(model_path)
+        continue
 
+    model_path = os.path.join(repo_folder, f"models/{model}")
+    if check_file_exists(model_path):
+        filtered_models.append(model_path)
+
+    print(f"Model '{model}' not found, removing from list")
 models = filtered_models
 
 # Loop over each combination of parameters
@@ -202,7 +216,7 @@ with open("benchmark_results.csv", "w", newline="") as csvfile:
 
     shortHash = get_git_short_hash()
     # Sort the results by total time in ascending order
-    sorted_results = sorted(results.items(), key=lambda x: x[1].get(totalTimeHeader, 0))
+    sorted_results = sorted(results.items(), key=lambda item: item[1].get(totalTimeHeader) or 0.0)
     for params, times in sorted_results:
         row = {
             gitHashHeader: shortHash,
