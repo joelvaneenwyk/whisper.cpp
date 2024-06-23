@@ -69,4 +69,5 @@ vcpkg_installed/
 out/
 build_*/
 .task/
+dist/
 *.nupkg

@@ -42,7 +42,18 @@ env:
 tasks:
   default:
     cmds:
-      - task: build
+      - task: run
+
+  commit-prepare:
+    deps: [build]
+    vars:
+      COMMIT_MSG: 'Update'
+      IOS_BINDINGS_DIR: '{{.TASKFILE_DIR}}/bindings/ios'
+      IOS_BINDINGS_MAKEFILE: '{{.TASKFILE_DIR}}/bindings/ios/Makefile'
+    cmds:
+      - cmd: 'git -C "{{ .IOS_BINDINGS_DIR }}" checkout -q -- "{{ fromSlash .IOS_BINDINGS_MAKEFILE }}"'
+        ignore_error: true
+      - cmd: 'git -C "{{ .TASKFILE_DIR }}" add .'
 
   run:
     deps: [build]
