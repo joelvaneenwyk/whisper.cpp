@@ -95,7 +95,7 @@ def check_file_exists(file: str) -> bool:
 def get_git_short_hash() -> str:
     try:
         return subprocess.check_output(["git", "rev-parse", "--short", "HEAD"]).decode().strip()
-    except subprocess.CalledProcessError as e:
+    except subprocess.CalledProcessError:
         return ""
 
 

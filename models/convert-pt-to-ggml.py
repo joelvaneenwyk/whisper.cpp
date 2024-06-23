@@ -32,11 +32,9 @@
 #
 
 import io
-import os
 import sys
 import struct
 import json
-import code
 import torch
 import numpy as np
 import base64

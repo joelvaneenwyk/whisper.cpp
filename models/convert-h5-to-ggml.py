@@ -15,12 +15,10 @@
 #   https://github.com/ggerganov/whisper.cpp/issues/157
 #
 
-import io
 import os
 import sys
 import struct
 import json
-import code
 import torch
 import numpy as np
 from pathlib import Path

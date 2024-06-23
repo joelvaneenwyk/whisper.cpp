@@ -95,7 +95,7 @@ with open(fname_inp, "rb") as f:
 
 # dims = ModelDimensions(**checkpoint["dims"])
 # model = Whisper(dims)
-from whisper import Whisper, ModelDimensions
+from whisper import Whisper, ModelDimensions  # noqa: E402
 
 dims = ModelDimensions(
     n_mels=n_mels,

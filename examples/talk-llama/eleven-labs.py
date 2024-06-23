@@ -52,7 +52,7 @@ if not args.quick:
         )
         sys.exit()
 
-from elevenlabs import voices, generate, play, save
+from elevenlabs import voices, generate, play, save  # noqa: E402
 
 if args.filter and "=" in args.filter[0]:
     voicelist = voices()
